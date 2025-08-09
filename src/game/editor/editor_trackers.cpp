@@ -417,6 +417,11 @@ int SPropTrackerHelper::GetDefaultLayerIndex(CEditor *pEditor)
 	return pEditor->m_vSelectedLayers[0];
 }
 
+void SPropTrackerHelper::OnModify(CEditor *pEditor)
+{
+	pEditor->m_Map.OnModify();
+}
+
 // -----------------------------------------------------------------------
 
 void CLayerPropTracker::OnEnd(ELayerProp Prop, int Value)
@@ -444,9 +449,9 @@ int CLayerPropTracker::PropToValue(ELayerProp Prop)
 
 // -----------------------------------------------------------------------
 
-bool CLayerTilesPropTracker::EndChecker(ETilesProp Prop, EEditState State, int Value)
+bool CLayerTilesPropTracker::EndChecker(ETilesProp Prop, int Value)
 {
-	return (State == EEditState::END || State == EEditState::ONE_GO) && (Value != m_OriginalValue || Prop == ETilesProp::PROP_SHIFT);
+	return Value != m_OriginalValue || Prop == ETilesProp::PROP_SHIFT;
 }
 
 void CLayerTilesPropTracker::OnStart(ETilesProp Prop)
@@ -548,9 +553,9 @@ void CLayerTilesCommonPropTracker::OnEnd(ETilesCommonProp Prop, int Value)
 	m_pEditor->m_EditorHistory.RecordAction(std::make_shared<CEditorActionBulk>(m_pEditor, vpActions, aDisplay));
 }
 
-bool CLayerTilesCommonPropTracker::EndChecker(ETilesCommonProp Prop, EEditState State, int Value)
+bool CLayerTilesCommonPropTracker::EndChecker(ETilesCommonProp Prop, int Value)
 {
-	return (State == EEditState::END || State == EEditState::ONE_GO) && (Value != m_OriginalValue || Prop == ETilesCommonProp::PROP_SHIFT);
+	return Value != m_OriginalValue || Prop == ETilesCommonProp::PROP_SHIFT;
 }
 
 int CLayerTilesCommonPropTracker::PropToValue(ETilesCommonProp Prop)

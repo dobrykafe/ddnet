@@ -129,6 +129,7 @@ struct SPropTrackerHelper
 {
 	static int GetDefaultGroupIndex(CEditor *pEditor);
 	static int GetDefaultLayerIndex(CEditor *pEditor);
+	static void OnModify(CEditor *pEditor);
 };
 
 template<typename T, typename E>
@@ -151,7 +152,7 @@ public:
 		m_CurrentLayerIndex = m_OriginalLayerIndex;
 
 		int Value = PropToValue(Prop);
-		if(StartChecker(Prop, State, Value))
+		if(State == EEditState::START || State == EEditState::ONE_GO)
 		{
 			m_Tracking = true;
 			m_OriginalValue = Value;
@@ -159,33 +160,35 @@ public:
 		}
 	}
 
-	void End(E Prop, EEditState State, int GroupIndex = -1, int LayerIndex = -1)
+	bool End(E Prop, EEditState State, int GroupIndex = -1, int LayerIndex = -1)
 	{
 		if(!m_Tracking || Prop == static_cast<E>(-1))
-			return;
+			return false;
 
 		m_CurrentGroupIndex = GroupIndex < 0 ? SPropTrackerHelper::GetDefaultGroupIndex(m_pEditor) : GroupIndex;
 		m_CurrentLayerIndex = LayerIndex < 0 ? SPropTrackerHelper::GetDefaultLayerIndex(m_pEditor) : LayerIndex;
 
-		int Value = PropToValue(Prop);
-		if(EndChecker(Prop, State, Value))
+		if(State == EEditState::END || State == EEditState::ONE_GO)
 		{
 			m_Tracking = false;
-			OnEnd(Prop, Value);
+			int Value = PropToValue(Prop);
+			if(EndChecker(Prop, Value))
+			{
+				SPropTrackerHelper::OnModify(m_pEditor);
+				OnEnd(Prop, Value);
+				return true;
+			}
 		}
+		return false;
 	}
 
 protected:
 	virtual void OnStart(E Prop) {}
 	virtual void OnEnd(E Prop, int Value) {}
 	virtual int PropToValue(E Prop) { return 0; }
-	virtual bool StartChecker(E Prop, EEditState State, int Value)
+	virtual bool EndChecker(E Prop, int Value)
 	{
-		return State == EEditState::START || State == EEditState::ONE_GO;
-	}
-	virtual bool EndChecker(E Prop, EEditState State, int Value)
-	{
-		return (State == EEditState::END || State == EEditState::ONE_GO) && (Value != m_OriginalValue);
+		return Value != m_OriginalValue;
 	}
 
 	int m_OriginalValue;
@@ -217,7 +220,7 @@ public:
 protected:
 	void OnStart(ETilesProp Prop) override;
 	void OnEnd(ETilesProp Prop, int Value) override;
-	bool EndChecker(ETilesProp Prop, EEditState State, int Value) override;
+	bool EndChecker(ETilesProp Prop, int Value) override;
 
 	int PropToValue(ETilesProp Prop) override;
 
@@ -234,7 +237,7 @@ public:
 protected:
 	void OnStart(ETilesCommonProp Prop) override;
 	void OnEnd(ETilesCommonProp Prop, int Value) override;
-	bool EndChecker(ETilesCommonProp Prop, EEditState State, int Value) override;
+	bool EndChecker(ETilesCommonProp Prop, int Value) override;
 
 	int PropToValue(ETilesCommonProp Prop) override;
 

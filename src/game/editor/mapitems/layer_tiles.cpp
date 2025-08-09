@@ -1163,10 +1163,8 @@ CUi::EPopupMenuFunctionResult CLayerTiles::RenderProperties(CUIRect *pToolBox)
 		m_LiveGameTiles = NewVal != 0;
 	}
 
-	s_Tracker.End(Prop, State);
-
 	// Check if modified property could have an effect on automapper
-	if((State == EEditState::END || State == EEditState::ONE_GO) && HasAutomapEffect(Prop))
+	if(s_Tracker.End(Prop, State) && HasAutomapEffect(Prop))
 	{
 		FlagModified(0, 0, m_Width, m_Height);
 

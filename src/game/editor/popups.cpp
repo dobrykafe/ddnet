@@ -660,10 +660,6 @@ CUi::EPopupMenuFunctionResult CEditor::PopupGroup(void *pContext, CUIRect View, 
 	static int s_aIds[(int)EGroupProp::NUM_PROPS] = {0};
 	int NewVal = 0;
 	auto [State, Prop] = pEditor->DoPropertiesWithState<EGroupProp>(&View, aProps, s_aIds, &NewVal);
-	if(Prop != EGroupProp::PROP_NONE && (State == EEditState::END || State == EEditState::ONE_GO))
-	{
-		pEditor->m_Map.OnModify();
-	}
 
 	static CLayerGroupPropTracker s_Tracker(pEditor);
 	s_Tracker.Begin(pEditor->GetSelectedGroup().get(), Prop, State);
@@ -799,10 +795,6 @@ CUi::EPopupMenuFunctionResult CEditor::PopupLayer(void *pContext, CUIRect View, 
 	static int s_aIds[(int)ELayerProp::NUM_PROPS] = {0};
 	int NewVal = 0;
 	auto [State, Prop] = pEditor->DoPropertiesWithState<ELayerProp>(&View, aProps, s_aIds, &NewVal);
-	if(Prop != ELayerProp::PROP_NONE && (State == EEditState::END || State == EEditState::ONE_GO))
-	{
-		pEditor->m_Map.OnModify();
-	}
 
 	static CLayerPropTracker s_Tracker(pEditor);
 	s_Tracker.Begin(pCurrentLayer.get(), Prop, State);
@@ -1152,10 +1144,6 @@ CUi::EPopupMenuFunctionResult CEditor::PopupSource(void *pContext, CUIRect View,
 	static int s_aIds[(int)ESoundProp::NUM_PROPS] = {0};
 	int NewVal = 0;
 	auto [State, Prop] = pEditor->DoPropertiesWithState<ESoundProp>(&View, aProps, s_aIds, &NewVal);
-	if(Prop != ESoundProp::PROP_NONE && (State == EEditState::END || State == EEditState::ONE_GO))
-	{
-		pEditor->m_Map.OnModify();
-	}
 
 	static CSoundSourcePropTracker s_Tracker(pEditor);
 	s_Tracker.Begin(pSource, Prop, State);
@@ -1234,10 +1222,6 @@ CUi::EPopupMenuFunctionResult CEditor::PopupSource(void *pContext, CUIRect View,
 		static int s_aCircleIds[(int)ECircleShapeProp::NUM_PROPS] = {0};
 		NewVal = 0;
 		auto [LocalState, LocalProp] = pEditor->DoPropertiesWithState<ECircleShapeProp>(&View, aCircleProps, s_aCircleIds, &NewVal);
-		if(LocalProp != ECircleShapeProp::PROP_NONE && (LocalState == EEditState::END || LocalState == EEditState::ONE_GO))
-		{
-			pEditor->m_Map.OnModify();
-		}
 
 		static CSoundSourceCircleShapePropTracker s_ShapeTracker(pEditor);
 		s_ShapeTracker.Begin(pSource, LocalProp, LocalState);
@@ -1262,10 +1246,6 @@ CUi::EPopupMenuFunctionResult CEditor::PopupSource(void *pContext, CUIRect View,
 		static int s_aRectangleIds[(int)ERectangleShapeProp::NUM_PROPS] = {0};
 		NewVal = 0;
 		auto [LocalState, LocalProp] = pEditor->DoPropertiesWithState<ERectangleShapeProp>(&View, aRectangleProps, s_aRectangleIds, &NewVal);
-		if(LocalProp != ERectangleShapeProp::PROP_NONE && (LocalState == EEditState::END || LocalState == EEditState::ONE_GO))
-		{
-			pEditor->m_Map.OnModify();
-		}
 
 		static CSoundSourceRectShapePropTracker s_ShapeTracker(pEditor);
 		s_ShapeTracker.Begin(pSource, LocalProp, LocalState);
